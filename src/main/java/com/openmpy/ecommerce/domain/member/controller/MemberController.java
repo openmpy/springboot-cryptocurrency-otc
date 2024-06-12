@@ -7,6 +7,7 @@ import com.openmpy.ecommerce.domain.member.dto.response.SigninMemberResponseDto;
 import com.openmpy.ecommerce.domain.member.dto.response.SignupMemberResponseDto;
 import com.openmpy.ecommerce.domain.member.service.MemberService;
 import com.openmpy.ecommerce.global.security.UserDetailsImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,9 +32,10 @@ public class MemberController {
 
     @PostMapping("/signin")
     public ResponseEntity<SigninMemberResponseDto> signin(
-            @Valid @RequestBody SigninMemberRequestDto requestDto
+            @Valid @RequestBody SigninMemberRequestDto requestDto,
+            HttpServletRequest httpServletRequest
     ) {
-        SigninMemberResponseDto responseDto = memberService.signin(requestDto);
+        SigninMemberResponseDto responseDto = memberService.signin(requestDto, httpServletRequest);
         return ResponseEntity.ok(responseDto);
     }
 
