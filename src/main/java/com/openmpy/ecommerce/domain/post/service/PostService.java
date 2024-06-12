@@ -10,8 +10,14 @@ import com.openmpy.ecommerce.domain.post.repository.PostRepository;
 import com.openmpy.ecommerce.global.exception.CustomException;
 import com.openmpy.ecommerce.global.exception.constants.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -35,5 +41,14 @@ public class PostService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
 
         return new GetPostResponseDto(postEntity);
+    }
+
+    public Page<GetPostResponseDto> gets(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(Math.max(0, page), size, Sort.Direction.DESC, "createdAt");
+        Page<PostEntity> pagedPosts = postRepository.findAll(pageRequest);
+        List<GetPostResponseDto> postResponses = pagedPosts.stream()
+                .map(GetPostResponseDto::new)
+                .toList();
+        return new PageImpl<>(postResponses, pageRequest, pagedPosts.getTotalElements());
     }
 }
