@@ -41,6 +41,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(Customizer.withDefaults())
                 .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers(HttpMethod.GET, "/api/v1/posts/{postId}").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/members/signup", "/api/v1/members/signin").permitAll()
                         .anyRequest().authenticated()
                 )

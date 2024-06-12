@@ -4,6 +4,7 @@ import com.openmpy.ecommerce.domain.member.entity.MemberEntity;
 import com.openmpy.ecommerce.domain.member.repository.MemberRepository;
 import com.openmpy.ecommerce.domain.post.dto.request.CreatePostRequestDto;
 import com.openmpy.ecommerce.domain.post.dto.response.CreatePostResponseDto;
+import com.openmpy.ecommerce.domain.post.dto.response.GetPostResponseDto;
 import com.openmpy.ecommerce.domain.post.entity.PostEntity;
 import com.openmpy.ecommerce.domain.post.repository.PostRepository;
 import com.openmpy.ecommerce.global.exception.CustomException;
@@ -27,5 +28,12 @@ public class PostService {
 
         PostEntity postEntity = postRepository.save(requestDto.create(memberEntity));
         return new CreatePostResponseDto(postEntity);
+    }
+
+    public GetPostResponseDto get(Long postId) {
+        PostEntity postEntity = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+
+        return new GetPostResponseDto(postEntity);
     }
 }
