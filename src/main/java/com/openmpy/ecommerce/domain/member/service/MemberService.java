@@ -1,0 +1,56 @@
+package com.openmpy.ecommerce.domain.member.service;
+
+import com.openmpy.ecommerce.domain.member.dto.request.SigninMemberRequestDto;
+import com.openmpy.ecommerce.domain.member.dto.request.SignupMemberRequestDto;
+import com.openmpy.ecommerce.domain.member.dto.response.GetMemberResponseDto;
+import com.openmpy.ecommerce.domain.member.dto.response.SigninMemberResponseDto;
+import com.openmpy.ecommerce.domain.member.dto.response.SignupMemberResponseDto;
+import com.openmpy.ecommerce.domain.member.entity.MemberEntity;
+import com.openmpy.ecommerce.domain.member.repository.MemberRepository;
+import com.openmpy.ecommerce.global.exception.CustomException;
+import com.openmpy.ecommerce.global.exception.constants.ErrorCode;
+import com.openmpy.ecommerce.global.jwt.JwtService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@RequiredArgsConstructor
+@Transactional
+@Service
+public class MemberService {
+
+    private final MemberRepository memberRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+
+    public SignupMemberResponseDto signup(SignupMemberRequestDto requestDto) {
+        if (memberRepository.existsByEmail(requestDto.email())) {
+            throw new CustomException(ErrorCode.ALREADY_EXISTS_MEMBER);
+        }
+
+        String encodedPassword = passwordEncoder.encode(requestDto.password());
+        MemberEntity memberEntity = memberRepository.save(requestDto.signup(encodedPassword));
+        return new SignupMemberResponseDto(memberEntity);
+    }
+
+    public SigninMemberResponseDto signin(SigninMemberRequestDto requestDto) {
+        MemberEntity memberEntity = memberRepository.findByEmail(requestDto.email())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+
+        if (!passwordEncoder.matches(requestDto.password(), memberEntity.getPassword())) {
+            throw new CustomException(ErrorCode.NO_MATCHES_PASSWORD);
+        }
+
+        String accessToken = jwtService.generateAccessToken(memberEntity);
+        return new SigninMemberResponseDto(accessToken);
+    }
+
+    @Transactional(readOnly = true)
+    public GetMemberResponseDto get(String email) {
+        MemberEntity memberEntity = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+
+        return new GetMemberResponseDto(memberEntity);
+    }
+}
