@@ -57,4 +57,14 @@ public class PostController {
         UpdatePostResponseDto responseDto = postService.update(email, postId, requestDto);
         return ResponseEntity.ok(responseDto);
     }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Void> delete(
+            @PathVariable Long postId,
+            Authentication authentication
+    ) {
+        String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        postService.delete(email, postId);
+        return ResponseEntity.noContent().build();
+    }
 }

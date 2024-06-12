@@ -68,4 +68,18 @@ public class PostService {
         postEntity.update(requestDto.title(), requestDto.content());
         return new UpdatePostResponseDto(postEntity);
     }
+
+    @Transactional
+    public void delete(String email, Long postId) {
+        MemberEntity memberEntity = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+        PostEntity postEntity = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+
+        if (!postEntity.getWriter().equals(memberEntity)) {
+            throw new CustomException(ErrorCode.INVALID_POST_MEMBER);
+        }
+
+        postRepository.delete(postEntity);
+    }
 }
