@@ -67,4 +67,14 @@ public class PostController {
         postService.delete(email, postId);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<GetPostResponseDto>> search(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<GetPostResponseDto> responseDtos = postService.search(query, page, size);
+        return ResponseEntity.ok(responseDtos);
+    }
 }

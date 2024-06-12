@@ -77,6 +77,15 @@ public class PostService {
         postRepository.delete(postEntity);
     }
 
+    public Page<GetPostResponseDto> search(String query, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(Math.max(0, page), size, Sort.Direction.DESC, "createdAt");
+        Page<PostEntity> pagedPosts = postRepository.findByQuery(query, pageRequest);
+        List<GetPostResponseDto> postResponses = pagedPosts.stream()
+                .map(GetPostResponseDto::new)
+                .toList();
+        return new PageImpl<>(postResponses, pageRequest, pagedPosts.getTotalElements());
+    }
+
     private PostEntity validatePostEntity(Long postId) {
         return postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
