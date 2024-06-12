@@ -18,6 +18,7 @@ public enum ErrorCode {
     NO_MATCHES_PASSWORD(HttpStatus.BAD_REQUEST, "M-003", "비밀번호가 일치하지 않습니다."),
 
     NOT_FOUND_POST(HttpStatus.NOT_FOUND, "P-001", "찾을 수 없는 게시글입니다."),
+    INVALID_POST_MEMBER(HttpStatus.BAD_REQUEST, "P-002", "본인이 작성한 게시글이 아닙니다."),
     ;
 
     private final HttpStatus httpStatus;

@@ -1,8 +1,10 @@
 package com.openmpy.ecommerce.domain.post.controller;
 
 import com.openmpy.ecommerce.domain.post.dto.request.CreatePostRequestDto;
+import com.openmpy.ecommerce.domain.post.dto.request.UpdatePostRequestDto;
 import com.openmpy.ecommerce.domain.post.dto.response.CreatePostResponseDto;
 import com.openmpy.ecommerce.domain.post.dto.response.GetPostResponseDto;
+import com.openmpy.ecommerce.domain.post.dto.response.UpdatePostResponseDto;
 import com.openmpy.ecommerce.domain.post.service.PostService;
 import com.openmpy.ecommerce.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
@@ -43,5 +45,16 @@ public class PostController {
     ) {
         Page<GetPostResponseDto> responseDtos = postService.gets(page, size);
         return ResponseEntity.ok(responseDtos);
+    }
+
+    @PutMapping("/{postId}")
+    public ResponseEntity<UpdatePostResponseDto> update(
+            @PathVariable Long postId,
+            @Valid @RequestBody UpdatePostRequestDto requestDto,
+            Authentication authentication
+    ) {
+        String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        UpdatePostResponseDto responseDto = postService.update(email, postId, requestDto);
+        return ResponseEntity.ok(responseDto);
     }
 }
