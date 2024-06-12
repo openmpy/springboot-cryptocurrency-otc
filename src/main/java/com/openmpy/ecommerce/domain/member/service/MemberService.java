@@ -39,8 +39,7 @@ public class MemberService {
     }
 
     public SigninMemberResponseDto signin(SigninMemberRequestDto requestDto, HttpServletRequest httpServletRequest) {
-        MemberEntity memberEntity = memberRepository.findByEmail(requestDto.email())
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+        MemberEntity memberEntity = validateMemberEntity(requestDto.email());
 
         if (!passwordEncoder.matches(requestDto.password(), memberEntity.getPassword())) {
             throw new CustomException(ErrorCode.NO_MATCHES_PASSWORD);
@@ -53,10 +52,14 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public GetMemberResponseDto get(String email) {
-        MemberEntity memberEntity = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+        MemberEntity memberEntity = validateMemberEntity(email);
 
         return new GetMemberResponseDto(memberEntity);
+    }
+
+    private MemberEntity validateMemberEntity(String email) {
+        return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
     private void getMemberIp(MemberEntity memberEntity, HttpServletRequest httpServletRequest) {

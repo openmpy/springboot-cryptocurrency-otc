@@ -31,16 +31,14 @@ public class PostService {
 
     @Transactional
     public CreatePostResponseDto create(String email, CreatePostRequestDto requestDto) {
-        MemberEntity memberEntity = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+        MemberEntity memberEntity = validateMemberEntity(email);
 
         PostEntity postEntity = postRepository.save(requestDto.create(memberEntity));
         return new CreatePostResponseDto(postEntity);
     }
 
     public GetPostResponseDto get(Long postId) {
-        PostEntity postEntity = postRepository.findById(postId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+        PostEntity postEntity = validatePostEntity(postId);
 
         return new GetPostResponseDto(postEntity);
     }
@@ -56,10 +54,8 @@ public class PostService {
 
     @Transactional
     public UpdatePostResponseDto update(String email, Long postId, UpdatePostRequestDto requestDto) {
-        MemberEntity memberEntity = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
-        PostEntity postEntity = postRepository.findById(postId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+        MemberEntity memberEntity = validateMemberEntity(email);
+        PostEntity postEntity = validatePostEntity(postId);
 
         if (!postEntity.getWriter().equals(memberEntity)) {
             throw new CustomException(ErrorCode.INVALID_POST_MEMBER);
@@ -71,15 +67,23 @@ public class PostService {
 
     @Transactional
     public void delete(String email, Long postId) {
-        MemberEntity memberEntity = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
-        PostEntity postEntity = postRepository.findById(postId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+        MemberEntity memberEntity = validateMemberEntity(email);
+        PostEntity postEntity = validatePostEntity(postId);
 
         if (!postEntity.getWriter().equals(memberEntity)) {
             throw new CustomException(ErrorCode.INVALID_POST_MEMBER);
         }
 
         postRepository.delete(postEntity);
+    }
+
+    private PostEntity validatePostEntity(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+    }
+
+    private MemberEntity validateMemberEntity(String email) {
+        return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 }
