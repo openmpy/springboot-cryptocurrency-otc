@@ -5,5 +5,6 @@ import java.util.Map;
 public record ErrorResponseDto(
         String code,
         String message,
-        Map<String, String> errors) {
+        Map<String, String> errors
+) {
 }
