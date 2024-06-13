@@ -11,6 +11,7 @@ import com.openmpy.ecommerce.domain.post.entity.PostEntity;
 import com.openmpy.ecommerce.domain.post.entity.PostImageEntity;
 import com.openmpy.ecommerce.domain.post.repository.PostImageRepository;
 import com.openmpy.ecommerce.domain.post.repository.PostLikeRepository;
+import com.openmpy.ecommerce.domain.post.repository.PostReportRepository;
 import com.openmpy.ecommerce.domain.post.repository.PostRepository;
 import com.openmpy.ecommerce.global.exception.CustomException;
 import com.openmpy.ecommerce.global.exception.constants.ErrorCode;
@@ -49,6 +50,7 @@ public class PostService {
     private final S3Service s3Service;
     private final PostImageRepository postImageRepository;
     private final PostLikeRepository postLikeRepository;
+    private final PostReportRepository postReportRepository;
 
     @Transactional
     public CreatePostResponseDto create(String email, CreatePostRequestDto requestDto, List<MultipartFile> multipartFiles) {
@@ -107,6 +109,7 @@ public class PostService {
         });
 
         postLikeRepository.deleteAll(postLikeRepository.findAllByPostEntity(postEntity));
+        postReportRepository.deleteAll(postReportRepository.findAllByPostEntity(postEntity));
         postRepository.delete(postEntity);
     }
 
