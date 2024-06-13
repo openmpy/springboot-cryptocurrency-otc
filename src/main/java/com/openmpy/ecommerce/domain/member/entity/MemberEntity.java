@@ -42,4 +42,8 @@ public class MemberEntity extends BaseEntity {
     public void minusBalance(BigDecimal totalPrice) {
         this.balance = this.balance.subtract(totalPrice);
     }
+
+    public void plusBalance(BigDecimal totalPrice) {
+        this.balance = this.balance.add(totalPrice);
+    }
 }

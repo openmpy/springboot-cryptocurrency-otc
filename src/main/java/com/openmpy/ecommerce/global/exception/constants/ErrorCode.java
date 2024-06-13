@@ -32,6 +32,8 @@ public enum ErrorCode {
     NOT_FOUND_WALLET(HttpStatus.NOT_FOUND, "W-001", "찾을 수 없는 지갑입니다."),
 
     INSUFFICIENT_BALANCE(HttpStatus.BAD_REQUEST, "T-001", "자산이 부족합니다."),
+    NOT_FOUND_TRADE(HttpStatus.NOT_FOUND, "T-002", "찾을 수 없는 거래입니다."),
+    NO_MATCHES_TRADE_MEMBER(HttpStatus.BAD_REQUEST, "T-003", "거래 작성자가 일치하지 않습니다."),
     ;
 
     private final HttpStatus httpStatus;

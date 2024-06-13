@@ -16,6 +16,12 @@ import java.math.BigDecimal;
 @Entity
 public class WalletEntity extends BaseEntity {
 
+    @Column(nullable = false)
+    private BigDecimal amount;
+
+    @Column(nullable = false)
+    private BigDecimal average;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private MemberEntity memberEntity;
@@ -24,21 +30,19 @@ public class WalletEntity extends BaseEntity {
     @JoinColumn(name = "coin_id")
     private CoinEntity coinEntity;
 
-    @Column(nullable = false)
-    private BigDecimal amount;
-
-    @Column(nullable = false)
-    private BigDecimal average;
-
     @Builder
-    public WalletEntity(MemberEntity memberEntity, CoinEntity coinEntity, BigDecimal amount, BigDecimal average) {
-        this.memberEntity = memberEntity;
-        this.coinEntity = coinEntity;
+    public WalletEntity(BigDecimal amount, BigDecimal average, MemberEntity memberEntity, CoinEntity coinEntity) {
         this.amount = amount;
         this.average = average;
+        this.memberEntity = memberEntity;
+        this.coinEntity = coinEntity;
     }
 
     public void minusAmount(BigDecimal amount) {
         this.amount = this.amount.subtract(amount);
+    }
+
+    public void plusAmount(BigDecimal amount) {
+        this.amount = this.amount.add(amount);
     }
 }

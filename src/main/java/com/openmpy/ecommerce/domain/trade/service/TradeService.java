@@ -9,6 +9,7 @@ import com.openmpy.ecommerce.domain.trade.dto.request.SellTradeRequestDto;
 import com.openmpy.ecommerce.domain.trade.dto.response.BuyTradeResponseDto;
 import com.openmpy.ecommerce.domain.trade.dto.response.SellTradeResponseDto;
 import com.openmpy.ecommerce.domain.trade.entity.TradeEntity;
+import com.openmpy.ecommerce.domain.trade.entity.constants.TradeType;
 import com.openmpy.ecommerce.domain.trade.repository.TradeRepository;
 import com.openmpy.ecommerce.domain.wallet.entity.WalletEntity;
 import com.openmpy.ecommerce.domain.wallet.repository.WalletRepository;
@@ -60,6 +61,23 @@ public class TradeService {
         return new SellTradeResponseDto(tradeEntity);
     }
 
+    public void cancel(Long tradeId, String email) {
+        MemberEntity memberEntity = validateMemberEntity(email);
+        TradeEntity tradeEntity = validateTradeEntity(tradeId);
+
+        if (!memberEntity.equals(tradeEntity.getMemberEntity())) {
+            throw new CustomException(ErrorCode.NO_MATCHES_TRADE_MEMBER);
+        }
+
+        cancelTradeType(tradeEntity, memberEntity);
+        tradeRepository.delete(tradeEntity);
+    }
+
+    private TradeEntity validateTradeEntity(Long tradeId) {
+        return tradeRepository.findById(tradeId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TRADE));
+    }
+
     private MemberEntity validateMemberEntity(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
@@ -68,5 +86,27 @@ public class TradeService {
     private CoinEntity validateCoinEntity(Long coinId) {
         return coinRepository.findById(coinId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COIN));
+    }
+
+    private void cancelTradeType(TradeEntity tradeEntity, MemberEntity memberEntity) {
+        if (tradeEntity.getTradeType().equals(TradeType.BUY)) {
+            BigDecimal totalPrice = tradeEntity.getAmount().multiply(tradeEntity.getPrice());
+            memberEntity.plusBalance(totalPrice);
+        } else if (tradeEntity.getTradeType().equals(TradeType.SELL)) {
+            walletRepository.findByMemberEntityAndCoinEntity(memberEntity, tradeEntity.getCoinEntity())
+                    .ifPresentOrElse(
+                            walletEntity -> walletEntity.plusAmount(tradeEntity.getAmount()),
+                            () -> {
+                                WalletEntity walletEntity = WalletEntity.builder()
+                                        .amount(tradeEntity.getAmount())
+                                        .average(BigDecimal.ZERO)
+                                        .memberEntity(tradeEntity.getMemberEntity())
+                                        .coinEntity(tradeEntity.getCoinEntity())
+                                        .build();
+
+                                walletRepository.save(walletEntity);
+                            }
+                    );
+        }
     }
 }
