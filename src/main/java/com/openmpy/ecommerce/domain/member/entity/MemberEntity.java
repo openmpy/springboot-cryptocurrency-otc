@@ -11,6 +11,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
@@ -26,10 +28,14 @@ public class MemberEntity extends BaseEntity {
     @Column(nullable = false)
     private RoleType role;
 
+    @Column(nullable = false)
+    private BigDecimal balance = BigDecimal.ZERO;
+
     @Builder
-    public MemberEntity(String email, String password, RoleType role) {
+    public MemberEntity(String email, String password, RoleType role, BigDecimal balance) {
         this.email = email;
         this.password = password;
         this.role = role;
+        this.balance = balance;
     }
 }

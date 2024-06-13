@@ -5,6 +5,8 @@ import com.openmpy.ecommerce.domain.member.entity.constants.RoleType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+import java.math.BigDecimal;
+
 public record SignupMemberRequestDto(
         @Email(message = "이메일 형식으로 입력해주시길 바랍니다.")
         String email,
@@ -18,6 +20,7 @@ public record SignupMemberRequestDto(
                 .email(this.email)
                 .password(encodedPassword)
                 .role(RoleType.ROLE_USER)
+                .balance(BigDecimal.ZERO)
                 .build();
     }
 }
