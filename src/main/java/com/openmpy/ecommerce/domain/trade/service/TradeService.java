@@ -31,7 +31,7 @@ public class TradeService {
     private final CoinRepository coinRepository;
     private final WalletRepository walletRepository;
 
-    public BuyTradeResponseDto buy(BuyTradeRequestDto requestDto, String email) {
+    public BuyTradeResponseDto buy(String email, BuyTradeRequestDto requestDto) {
         MemberEntity memberEntity = validateMemberEntity(email);
         CoinEntity coinEntity = validateCoinEntity(requestDto.coinId());
 
@@ -45,7 +45,7 @@ public class TradeService {
         return new BuyTradeResponseDto(tradeEntity);
     }
 
-    public SellTradeResponseDto sell(SellTradeRequestDto requestDto, String email) {
+    public SellTradeResponseDto sell(String email, SellTradeRequestDto requestDto) {
         MemberEntity memberEntity = validateMemberEntity(email);
         CoinEntity coinEntity = validateCoinEntity(requestDto.coinId());
 
@@ -61,7 +61,7 @@ public class TradeService {
         return new SellTradeResponseDto(tradeEntity);
     }
 
-    public void cancel(Long tradeId, String email) {
+    public void cancel(String email, Long tradeId) {
         MemberEntity memberEntity = validateMemberEntity(email);
         TradeEntity tradeEntity = validateTradeEntity(tradeId);
 

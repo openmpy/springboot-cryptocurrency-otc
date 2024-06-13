@@ -26,7 +26,7 @@ public class TradeController {
             Authentication authentication
     ) {
         String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
-        BuyTradeResponseDto responseDto = tradeService.buy(requestDto, email);
+        BuyTradeResponseDto responseDto = tradeService.buy(email, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
@@ -36,7 +36,7 @@ public class TradeController {
             Authentication authentication
     ) {
         String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
-        SellTradeResponseDto responseDto = tradeService.sell(requestDto, email);
+        SellTradeResponseDto responseDto = tradeService.sell(email, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
@@ -46,7 +46,7 @@ public class TradeController {
             Authentication authentication
     ) {
         String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
-        tradeService.cancel(tradeId, email);
+        tradeService.cancel(email, tradeId);
         return ResponseEntity.noContent().build();
     }
 }
