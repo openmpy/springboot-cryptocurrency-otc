@@ -38,4 +38,8 @@ public class MemberEntity extends BaseEntity {
         this.role = role;
         this.balance = balance;
     }
+
+    public void minusBalance(BigDecimal totalPrice) {
+        this.balance = balance.subtract(totalPrice);
+    }
 }

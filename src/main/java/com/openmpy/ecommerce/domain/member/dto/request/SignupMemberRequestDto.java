@@ -20,7 +20,7 @@ public record SignupMemberRequestDto(
                 .email(this.email)
                 .password(encodedPassword)
                 .role(RoleType.ROLE_USER)
-                .balance(BigDecimal.ZERO)
+                .balance(BigDecimal.valueOf(10_000_000L))
                 .build();
     }
 }
