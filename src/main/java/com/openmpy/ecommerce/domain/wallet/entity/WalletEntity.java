@@ -37,4 +37,8 @@ public class WalletEntity extends BaseEntity {
         this.amount = amount;
         this.average = average;
     }
+
+    public void minusAmount(BigDecimal amount) {
+        this.amount = this.amount.subtract(amount);
+    }
 }

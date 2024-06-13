@@ -1,7 +1,9 @@
 package com.openmpy.ecommerce.domain.trade.controller;
 
 import com.openmpy.ecommerce.domain.trade.dto.request.BuyTradeRequestDto;
+import com.openmpy.ecommerce.domain.trade.dto.request.SellTradeRequestDto;
 import com.openmpy.ecommerce.domain.trade.dto.response.BuyTradeResponseDto;
+import com.openmpy.ecommerce.domain.trade.dto.response.SellTradeResponseDto;
 import com.openmpy.ecommerce.domain.trade.service.TradeService;
 import com.openmpy.ecommerce.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
@@ -28,6 +30,16 @@ public class TradeController {
     ) {
         String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
         BuyTradeResponseDto responseDto = tradeService.buy(requestDto, email);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+    }
+
+    @PostMapping("/sell")
+    public ResponseEntity<SellTradeResponseDto> sell(
+            @Valid @RequestBody SellTradeRequestDto requestDto,
+            Authentication authentication
+    ) {
+        String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        SellTradeResponseDto responseDto = tradeService.sell(requestDto, email);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 }

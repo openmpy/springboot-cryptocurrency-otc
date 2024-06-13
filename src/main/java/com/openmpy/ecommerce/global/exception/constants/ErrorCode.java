@@ -29,6 +29,8 @@ public enum ErrorCode {
     INVALID_FETCHES_UPBIT_COINS(HttpStatus.BAD_REQUEST, "C-001", "업비트에 상장된 코인을 불러오지 못했습니다."),
     NOT_FOUND_COIN(HttpStatus.NOT_FOUND, "C-002", "찾을 수 없는 코인입니다."),
 
+    NOT_FOUND_WALLET(HttpStatus.NOT_FOUND, "W-001", "찾을 수 없는 지갑입니다."),
+
     INSUFFICIENT_BALANCE(HttpStatus.BAD_REQUEST, "T-001", "자산이 부족합니다."),
     ;
 
