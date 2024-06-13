@@ -6,6 +6,8 @@ import com.openmpy.ecommerce.domain.member.dto.response.GetMemberResponseDto;
 import com.openmpy.ecommerce.domain.member.dto.response.SigninMemberResponseDto;
 import com.openmpy.ecommerce.domain.member.dto.response.SignupMemberResponseDto;
 import com.openmpy.ecommerce.domain.member.service.MemberService;
+import com.openmpy.ecommerce.domain.wallet.dto.response.ListWalletResponseDto;
+import com.openmpy.ecommerce.domain.wallet.service.WalletService;
 import com.openmpy.ecommerce.global.security.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
+    private final WalletService walletService;
 
     @PostMapping("/signup")
     public ResponseEntity<SignupMemberResponseDto> signup(
@@ -43,6 +46,13 @@ public class MemberController {
     public ResponseEntity<GetMemberResponseDto> get(Authentication authentication) {
         String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
         GetMemberResponseDto responseDto = memberService.get(email);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/wallets")
+    public ResponseEntity<ListWalletResponseDto> getWallets(Authentication authentication) {
+        String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        ListWalletResponseDto responseDto = walletService.get(email);
         return ResponseEntity.ok(responseDto);
     }
 }
