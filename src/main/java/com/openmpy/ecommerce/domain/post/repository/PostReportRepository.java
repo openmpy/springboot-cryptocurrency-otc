@@ -12,4 +12,6 @@ public interface PostReportRepository extends JpaRepository<PostReportEntity, Lo
     boolean existsByMemberEntityAndPostEntity(MemberEntity memberEntity, PostEntity postEntity);
 
     List<PostReportEntity> findAllByPostEntity(PostEntity postEntity);
+
+    int countByPostEntity(PostEntity postEntity);
 }

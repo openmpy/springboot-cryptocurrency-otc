@@ -22,6 +22,9 @@ public class PostEntity extends BaseEntity {
     @Column
     private String thumbnailUrl;
 
+    @Column
+    private Boolean isDeleted = Boolean.FALSE;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private MemberEntity writer;
@@ -41,5 +44,9 @@ public class PostEntity extends BaseEntity {
 
     public void updateThumbnail(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public void updateDelete(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

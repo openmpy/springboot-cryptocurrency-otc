@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostReportService {
 
+    private static final int MAX_REPORT_COUNT = 5;
+
     private final PostRepository postRepository;
     private final PostReportRepository postReportRepository;
     private final MemberRepository memberRepository;
@@ -35,6 +37,7 @@ public class PostReportService {
                 .build();
 
         postReportRepository.save(postReportEntity);
+        checkReportPost(postEntity);
     }
 
     private PostEntity validatePostEntity(Long postId) {
@@ -45,5 +48,12 @@ public class PostReportService {
     private MemberEntity validateMemberEntity(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+    }
+
+    private void checkReportPost(PostEntity postEntity) {
+        int reportCount = postReportRepository.countByPostEntity(postEntity);
+        if (reportCount >= MAX_REPORT_COUNT) {
+            postEntity.updateDelete(Boolean.TRUE);
+        }
     }
 }
