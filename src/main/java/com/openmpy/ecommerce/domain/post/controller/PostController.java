@@ -11,9 +11,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/posts")
@@ -22,13 +26,14 @@ public class PostController {
 
     private final PostService postService;
 
-    @PostMapping
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<CreatePostResponseDto> create(
-            @Valid @RequestBody CreatePostRequestDto requestDto,
+            @Valid @RequestPart CreatePostRequestDto requestDto,
+            @RequestPart(required = false) List<MultipartFile> multipartFiles,
             Authentication authentication
     ) {
         String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
-        CreatePostResponseDto responseDto = postService.create(email, requestDto);
+        CreatePostResponseDto responseDto = postService.create(email, requestDto, multipartFiles);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 

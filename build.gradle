@@ -40,6 +40,13 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
+
+    // aws s3
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.741'
+
+    // jaxb
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
+
 }
 
 tasks.named('test') {

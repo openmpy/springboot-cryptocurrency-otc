@@ -13,8 +13,8 @@ public record CreatePostRequestDto(
 ) {
     public PostEntity create(MemberEntity memberEntity) {
         return PostEntity.builder()
-                .title(title)
-                .content(content)
+                .title(this.title)
+                .content(this.content)
                 .writer(memberEntity)
                 .build();
     }

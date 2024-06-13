@@ -19,19 +19,27 @@ public class PostEntity extends BaseEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    @Column
+    private String thumbnailUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private MemberEntity writer;
 
     @Builder
-    public PostEntity(String title, String content, MemberEntity writer) {
+    public PostEntity(String title, String content, String thumbnailUrl, MemberEntity writer) {
         this.title = title;
         this.content = content;
+        this.thumbnailUrl = thumbnailUrl;
         this.writer = writer;
     }
 
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    public void updateThumbnail(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
     }
 }

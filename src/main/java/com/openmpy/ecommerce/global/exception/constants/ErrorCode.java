@@ -19,6 +19,10 @@ public enum ErrorCode {
 
     NOT_FOUND_POST(HttpStatus.NOT_FOUND, "P-001", "찾을 수 없는 게시글입니다."),
     INVALID_POST_MEMBER(HttpStatus.BAD_REQUEST, "P-002", "본인이 작성한 게시글이 아닙니다."),
+    TOO_MANY_POST_IMAGE(HttpStatus.BAD_REQUEST, "P-003", "이미지는 최대 3장까지 가능합니다."),
+    TOO_LONG_POST_IMAGE_SIZE(HttpStatus.BAD_REQUEST, "P-004", "이미지 사이즈는 최대 5MB까지 가능합니다."),
+    INVALID_POST_IMAGE_TYPE(HttpStatus.BAD_REQUEST, "P-005", "이미지만 업로드 할 수 있습니다."),
+    UNKNOWN_POST_IMAGE_UPLOAD(HttpStatus.BAD_REQUEST, "P-006", "이미지 업로드 중 알 수 없는 에러가 발생했습니다."),
     ;
 
     private final HttpStatus httpStatus;
