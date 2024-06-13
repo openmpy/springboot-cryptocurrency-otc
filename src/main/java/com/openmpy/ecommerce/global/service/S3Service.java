@@ -2,6 +2,7 @@ package com.openmpy.ecommerce.global.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
@@ -27,5 +28,10 @@ public class S3Service {
                 .withCannedAcl(CannedAccessControlList.PublicRead);
 
         s3Client.putObject(request);
+    }
+
+    public void deleteFile(String keyName) {
+        DeleteObjectRequest request = new DeleteObjectRequest(bucket, keyName);
+        s3Client.deleteObject(request);
     }
 }

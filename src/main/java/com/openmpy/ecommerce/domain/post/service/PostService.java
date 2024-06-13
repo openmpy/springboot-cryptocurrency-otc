@@ -98,6 +98,11 @@ public class PostService {
             throw new CustomException(ErrorCode.INVALID_POST_MEMBER);
         }
 
+        postImageRepository.findAllByPostEntity(postEntity).forEach(postImageEntity -> {
+            s3Service.deleteFile(postImageEntity.getImageUrl());
+            postImageRepository.delete(postImageEntity);
+        });
+
         postRepository.delete(postEntity);
     }
 
