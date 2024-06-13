@@ -23,6 +23,7 @@ public enum ErrorCode {
     TOO_LONG_POST_IMAGE_SIZE(HttpStatus.BAD_REQUEST, "P-004", "이미지 사이즈는 최대 5MB까지 가능합니다."),
     INVALID_POST_IMAGE_TYPE(HttpStatus.BAD_REQUEST, "P-005", "이미지만 업로드 할 수 있습니다."),
     UNKNOWN_POST_IMAGE_UPLOAD(HttpStatus.BAD_REQUEST, "P-006", "이미지 업로드 중 알 수 없는 에러가 발생했습니다."),
+    ALREADY_LIKE_POST(HttpStatus.CONFLICT, "P-007", "이미 좋아요를 누른 게시글입니다."),
     ;
 
     private final HttpStatus httpStatus;

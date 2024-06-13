@@ -10,6 +10,7 @@ import com.openmpy.ecommerce.domain.post.dto.response.UpdatePostResponseDto;
 import com.openmpy.ecommerce.domain.post.entity.PostEntity;
 import com.openmpy.ecommerce.domain.post.entity.PostImageEntity;
 import com.openmpy.ecommerce.domain.post.repository.PostImageRepository;
+import com.openmpy.ecommerce.domain.post.repository.PostLikeRepository;
 import com.openmpy.ecommerce.domain.post.repository.PostRepository;
 import com.openmpy.ecommerce.global.exception.CustomException;
 import com.openmpy.ecommerce.global.exception.constants.ErrorCode;
@@ -47,6 +48,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final S3Service s3Service;
     private final PostImageRepository postImageRepository;
+    private final PostLikeRepository postLikeRepository;
 
     @Transactional
     public CreatePostResponseDto create(String email, CreatePostRequestDto requestDto, List<MultipartFile> multipartFiles) {
@@ -65,8 +67,9 @@ public class PostService {
     public GetPostResponseDto get(Long postId) {
         PostEntity postEntity = validatePostEntity(postId);
         List<PostImageEntity> postImageEntities = postImageRepository.findAllByPostEntity(postEntity);
+        long postLikes = postLikeRepository.countByPostEntity(postEntity);
 
-        return new GetPostResponseDto(postEntity, postImageEntities);
+        return new GetPostResponseDto(postEntity, postLikes, postImageEntities);
     }
 
     public Page<GetPostResponseDto> gets(int page, int size) {
@@ -103,6 +106,7 @@ public class PostService {
             postImageRepository.delete(postImageEntity);
         });
 
+        postLikeRepository.deleteAll(postLikeRepository.findAllByPostEntity(postEntity));
         postRepository.delete(postEntity);
     }
 
@@ -128,7 +132,8 @@ public class PostService {
 
         pagedPosts.forEach(postEntity -> {
             List<PostImageEntity> postImageEntities = postImageRepository.findAllByPostEntity(postEntity);
-            postResponses.add(new GetPostResponseDto(postEntity, postImageEntities));
+            long postLikes = postLikeRepository.countByPostEntity(postEntity);
+            postResponses.add(new GetPostResponseDto(postEntity, postLikes, postImageEntities));
         });
         return postResponses;
     }

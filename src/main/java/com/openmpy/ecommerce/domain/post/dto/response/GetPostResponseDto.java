@@ -12,15 +12,17 @@ public record GetPostResponseDto(
         String content,
         String writer,
         LocalDateTime createdAt,
+        Long likes,
         List<String> imageUrls
 ) {
-    public GetPostResponseDto(PostEntity postEntity, List<PostImageEntity> postImageEntities) {
+    public GetPostResponseDto(PostEntity postEntity, long postLikes, List<PostImageEntity> postImageEntities) {
         this(
                 postEntity.getId(),
                 postEntity.getTitle(),
                 postEntity.getContent(),
                 postEntity.getWriter().getEmail(),
                 postEntity.getCreatedAt(),
+                postLikes,
                 postImageEntities.stream()
                         .map(PostImageEntity::getImageUrl)
                         .toList()

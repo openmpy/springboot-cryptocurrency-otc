@@ -5,6 +5,7 @@ import com.openmpy.ecommerce.domain.post.dto.request.UpdatePostRequestDto;
 import com.openmpy.ecommerce.domain.post.dto.response.CreatePostResponseDto;
 import com.openmpy.ecommerce.domain.post.dto.response.GetPostResponseDto;
 import com.openmpy.ecommerce.domain.post.dto.response.UpdatePostResponseDto;
+import com.openmpy.ecommerce.domain.post.service.PostLikeService;
 import com.openmpy.ecommerce.domain.post.service.PostService;
 import com.openmpy.ecommerce.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
@@ -25,6 +26,7 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
+    private final PostLikeService postLikeService;
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<CreatePostResponseDto> create(
@@ -81,5 +83,15 @@ public class PostController {
     ) {
         Page<GetPostResponseDto> responseDtos = postService.search(query, page, size);
         return ResponseEntity.ok(responseDtos);
+    }
+
+    @PostMapping("/likes/{postId}")
+    public ResponseEntity<Void> like(
+            @PathVariable Long postId,
+            Authentication authentication
+    ) {
+        String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        postLikeService.like(email, postId);
+        return ResponseEntity.noContent().build();
     }
 }
