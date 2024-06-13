@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -63,16 +64,15 @@ public class PostService {
 
     public GetPostResponseDto get(Long postId) {
         PostEntity postEntity = validatePostEntity(postId);
+        List<PostImageEntity> postImageEntities = postImageRepository.findAllByPostEntity(postEntity);
 
-        return new GetPostResponseDto(postEntity);
+        return new GetPostResponseDto(postEntity, postImageEntities);
     }
 
     public Page<GetPostResponseDto> gets(int page, int size) {
         PageRequest pageRequest = PageRequest.of(Math.max(0, page), size, Sort.Direction.DESC, "createdAt");
         Page<PostEntity> pagedPosts = postRepository.findAll(pageRequest);
-        List<GetPostResponseDto> postResponses = pagedPosts.stream()
-                .map(GetPostResponseDto::new)
-                .toList();
+        List<GetPostResponseDto> postResponses = getGetPostResponseDtos(pagedPosts);
         return new PageImpl<>(postResponses, pageRequest, pagedPosts.getTotalElements());
     }
 
@@ -109,9 +109,7 @@ public class PostService {
     public Page<GetPostResponseDto> search(String query, int page, int size) {
         PageRequest pageRequest = PageRequest.of(Math.max(0, page), size, Sort.Direction.DESC, "createdAt");
         Page<PostEntity> pagedPosts = postRepository.findByQuery(query, pageRequest);
-        List<GetPostResponseDto> postResponses = pagedPosts.stream()
-                .map(GetPostResponseDto::new)
-                .toList();
+        List<GetPostResponseDto> postResponses = getGetPostResponseDtos(pagedPosts);
         return new PageImpl<>(postResponses, pageRequest, pagedPosts.getTotalElements());
     }
 
@@ -123,6 +121,16 @@ public class PostService {
     private MemberEntity validateMemberEntity(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+    }
+
+    private List<GetPostResponseDto> getGetPostResponseDtos(Page<PostEntity> pagedPosts) {
+        List<GetPostResponseDto> postResponses = new ArrayList<>();
+
+        pagedPosts.forEach(postEntity -> {
+            List<PostImageEntity> postImageEntities = postImageRepository.findAllByPostEntity(postEntity);
+            postResponses.add(new GetPostResponseDto(postEntity, postImageEntities));
+        });
+        return postResponses;
     }
 
     private void handlePostImages(List<MultipartFile> multipartFiles, PostEntity postEntity) {
