@@ -25,6 +25,8 @@ public enum ErrorCode {
     UNKNOWN_POST_IMAGE_UPLOAD(HttpStatus.BAD_REQUEST, "P-006", "이미지 업로드 중 알 수 없는 에러가 발생했습니다."),
     ALREADY_LIKE_POST(HttpStatus.CONFLICT, "P-007", "이미 좋아요를 누른 게시글입니다."),
     ALREADY_REPORT_POST(HttpStatus.CONFLICT, "P-008", "이미 신고한 게시글입니다."),
+
+    INVALID_FETCHES_UPBIT_COINS(HttpStatus.BAD_REQUEST, "C-001", "업비트에 상장된 코인을 불러오지 못했습니다."),
     ;
 
     private final HttpStatus httpStatus;
