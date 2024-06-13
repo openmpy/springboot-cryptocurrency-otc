@@ -47,10 +47,10 @@ public class PostService {
 
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
-    private final S3Service s3Service;
     private final PostImageRepository postImageRepository;
     private final PostLikeRepository postLikeRepository;
     private final PostReportRepository postReportRepository;
+    private final S3Service s3Service;
 
     @Transactional
     public CreatePostResponseDto create(String email, CreatePostRequestDto requestDto, List<MultipartFile> multipartFiles) {
