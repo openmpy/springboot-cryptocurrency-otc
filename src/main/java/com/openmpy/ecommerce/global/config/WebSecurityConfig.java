@@ -22,6 +22,14 @@ import java.util.List;
 @Configuration
 public class WebSecurityConfig {
 
+    private static final String[] GET_PERMIT_STRINGS = {
+            "/api/v1/posts", "/api/v1/posts/search", "/api/v1/posts/{postId}",
+            "/api/v1/coins/{coinId}",
+    };
+    private static final String[] POST_PERMIT_STRINGS = {
+            "/api/v1/members/signup", "/api/v1/members/signin"
+    };
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
 
@@ -41,8 +49,8 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(Customizer.withDefaults())
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(HttpMethod.GET, "/api/v1/posts", "/api/v1/posts/search", "/api/v1/posts/{postId}").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/members/signup", "/api/v1/members/signin").permitAll()
+                        .requestMatchers(HttpMethod.GET, GET_PERMIT_STRINGS).permitAll()
+                        .requestMatchers(HttpMethod.POST, POST_PERMIT_STRINGS).permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(
