@@ -81,9 +81,9 @@ public class TradeService {
     }
 
     @Transactional(readOnly = true)
-    public Page<GetTradeResponseDto> gets(int page, int size) {
+    public Page<GetTradeResponseDto> gets(String type, int page, int size) {
         PageRequest pageRequest = PageRequest.of(Math.max(0, page), size, Sort.Direction.DESC, "createdAt");
-        Page<TradeEntity> pagedTrades = tradeRepository.findAll(pageRequest);
+        Page<TradeEntity> pagedTrades = getPagedTradesByType(type, pageRequest);
         List<GetTradeResponseDto> tradeResponses = getTradeResponseDtos(pagedTrades);
         return new PageImpl<>(tradeResponses, pageRequest, pagedTrades.getTotalElements());
     }
@@ -123,6 +123,16 @@ public class TradeService {
                             }
                     );
         }
+    }
+
+    private Page<TradeEntity> getPagedTradesByType(String type, PageRequest pageRequest) {
+        Page<TradeEntity> pagedTrades;
+        switch (type) {
+            case "buy" -> pagedTrades = tradeRepository.findAllByTradeType(TradeType.BUY, pageRequest);
+            case "sell" -> pagedTrades = tradeRepository.findAllByTradeType(TradeType.SELL, pageRequest);
+            default -> pagedTrades = tradeRepository.findAll(pageRequest);
+        }
+        return pagedTrades;
     }
 
     private List<GetTradeResponseDto> getTradeResponseDtos(Page<TradeEntity> pagedTrades) {

@@ -54,10 +54,11 @@ public class TradeController {
 
     @GetMapping
     public ResponseEntity<Page<GetTradeResponseDto>> gets(
+            @RequestParam(defaultValue = "all") String type,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Page<GetTradeResponseDto> responseDto = tradeService.gets(page, size);
+        Page<GetTradeResponseDto> responseDto = tradeService.gets(type, page, size);
         return ResponseEntity.ok(responseDto);
     }
 }
