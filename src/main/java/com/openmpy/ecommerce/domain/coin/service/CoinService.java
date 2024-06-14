@@ -32,4 +32,11 @@ public class CoinService {
                 .toList();
         return new ListUpbitCoinResponseDto(responseDtos);
     }
+
+    public ListUpbitCoinResponseDto search(String query) {
+        List<GetUpbitCoinResponseDto> responseDtos = coinRepository.findByQuery(query).stream()
+                .map(GetUpbitCoinResponseDto::new)
+                .toList();
+        return new ListUpbitCoinResponseDto(responseDtos);
+    }
 }
