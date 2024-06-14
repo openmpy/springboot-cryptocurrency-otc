@@ -15,7 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,9 +34,9 @@ public class PostController {
     public ResponseEntity<CreatePostResponseDto> create(
             @Valid @RequestPart CreatePostRequestDto requestDto,
             @RequestPart(required = false) List<MultipartFile> multipartFiles,
-            Authentication authentication
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        String email = userDetails.getUsername();
         CreatePostResponseDto responseDto = postService.create(email, requestDto, multipartFiles);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
@@ -60,9 +60,9 @@ public class PostController {
     public ResponseEntity<UpdatePostResponseDto> update(
             @PathVariable Long postId,
             @Valid @RequestBody UpdatePostRequestDto requestDto,
-            Authentication authentication
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        String email = userDetails.getUsername();
         UpdatePostResponseDto responseDto = postService.update(email, postId, requestDto);
         return ResponseEntity.ok(responseDto);
     }
@@ -70,9 +70,9 @@ public class PostController {
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> delete(
             @PathVariable Long postId,
-            Authentication authentication
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        String email = userDetails.getUsername();
         postService.delete(email, postId);
         return ResponseEntity.noContent().build();
     }
@@ -90,9 +90,9 @@ public class PostController {
     @PostMapping("/likes/{postId}")
     public ResponseEntity<Void> like(
             @PathVariable Long postId,
-            Authentication authentication
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        String email = userDetails.getUsername();
         postLikeService.like(email, postId);
         return ResponseEntity.noContent().build();
     }
@@ -100,9 +100,9 @@ public class PostController {
     @PostMapping("/reports/{postId}")
     public ResponseEntity<Void> report(
             @PathVariable Long postId,
-            Authentication authentication
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        String email = userDetails.getUsername();
         postReportService.report(email, postId);
         return ResponseEntity.noContent().build();
     }

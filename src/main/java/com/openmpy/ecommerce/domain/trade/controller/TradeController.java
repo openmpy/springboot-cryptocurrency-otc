@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -25,9 +25,9 @@ public class TradeController {
     @PostMapping("/buy")
     public ResponseEntity<BuyTradeResponseDto> buy(
             @Valid @RequestBody BuyTradeRequestDto requestDto,
-            Authentication authentication
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        String email = userDetails.getUsername();
         BuyTradeResponseDto responseDto = tradeService.buy(email, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
@@ -35,9 +35,9 @@ public class TradeController {
     @PostMapping("/sell")
     public ResponseEntity<SellTradeResponseDto> sell(
             @Valid @RequestBody SellTradeRequestDto requestDto,
-            Authentication authentication
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        String email = userDetails.getUsername();
         SellTradeResponseDto responseDto = tradeService.sell(email, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
@@ -45,9 +45,9 @@ public class TradeController {
     @DeleteMapping("/{tradeId}")
     public ResponseEntity<Void> cancel(
             @PathVariable Long tradeId,
-            Authentication authentication
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
+        String email = userDetails.getUsername();
         tradeService.cancel(email, tradeId);
         return ResponseEntity.noContent().build();
     }
