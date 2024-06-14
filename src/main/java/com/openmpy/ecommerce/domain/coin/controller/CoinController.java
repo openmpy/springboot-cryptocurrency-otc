@@ -1,6 +1,7 @@
 package com.openmpy.ecommerce.domain.coin.controller;
 
 import com.openmpy.ecommerce.domain.coin.dto.response.GetUpbitCoinResponseDto;
+import com.openmpy.ecommerce.domain.coin.dto.response.ListUpbitCoinResponseDto;
 import com.openmpy.ecommerce.domain.coin.service.CoinService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,12 @@ public class CoinController {
     @GetMapping("/{coinId}")
     public ResponseEntity<GetUpbitCoinResponseDto> get(@PathVariable Long coinId) {
         GetUpbitCoinResponseDto responseDto = coinService.get(coinId);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping
+    public ResponseEntity<ListUpbitCoinResponseDto> gets() {
+        ListUpbitCoinResponseDto responseDto = coinService.gets();
         return ResponseEntity.ok(responseDto);
     }
 }
