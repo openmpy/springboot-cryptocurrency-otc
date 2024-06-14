@@ -61,4 +61,14 @@ public class TradeController {
         Page<GetTradeResponseDto> responseDto = tradeService.gets(type, page, size);
         return ResponseEntity.ok(responseDto);
     }
+
+    @PostMapping("/{tradeId}")
+    public ResponseEntity<Void> transaction(
+            @PathVariable Long tradeId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        String email = userDetails.getUsername();
+        tradeService.transaction(email, tradeId);
+        return ResponseEntity.noContent().build();
+    }
 }

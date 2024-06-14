@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,6 +87,91 @@ public class TradeService {
         Page<TradeEntity> pagedTrades = getPagedTradesByType(type, pageRequest);
         List<GetTradeResponseDto> tradeResponses = getTradeResponseDtos(pagedTrades);
         return new PageImpl<>(tradeResponses, pageRequest, pagedTrades.getTotalElements());
+    }
+
+    public void transaction(String email, Long tradeId) {
+        MemberEntity memberEntity = validateMemberEntity(email);
+        TradeEntity tradeEntity = validateTradeEntity(tradeId);
+
+        if (tradeEntity.getTradeType().equals(TradeType.BUY)) {
+            WalletEntity walletEntity = walletRepository.findByMemberEntityAndCoinEntity(memberEntity, tradeEntity.getCoinEntity())
+                    .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_WALLET));
+
+            if (walletEntity.getAmount().compareTo(tradeEntity.getAmount()) < 0) {
+                throw new CustomException(ErrorCode.INSUFFICIENT_BALANCE);
+            }
+
+            // 나
+            walletEntity.minusAmount(tradeEntity.getAmount());
+            memberEntity.plusBalance(tradeEntity.getAmount().multiply(tradeEntity.getPrice()));
+
+            // 상대
+            MemberEntity oppositeMemberEntity = tradeEntity.getMemberEntity();
+            walletRepository.findByMemberEntityAndCoinEntity(oppositeMemberEntity, tradeEntity.getCoinEntity())
+                    .ifPresentOrElse(
+                            oppositeWalletEntity -> {
+                                BigDecimal currentTotalAmount = oppositeWalletEntity.getAmount();
+                                BigDecimal currentAverage = oppositeWalletEntity.getAverage();
+                                BigDecimal newTradeAmount = tradeEntity.getAmount();
+                                BigDecimal newTradePrice = tradeEntity.getPrice();
+                                BigDecimal newAverage = (currentAverage.multiply(currentTotalAmount).add(newTradePrice.multiply(newTradeAmount)))
+                                        .divide(currentTotalAmount.add(newTradeAmount), 10, RoundingMode.UNNECESSARY);
+
+                                oppositeWalletEntity.plusAmount(tradeEntity.getAmount());
+                                oppositeWalletEntity.updateAverage(newAverage);
+                            },
+                            () -> {
+                                WalletEntity oppositeWalletEntity = WalletEntity.builder()
+                                        .amount(tradeEntity.getAmount())
+                                        .average(tradeEntity.getPrice())
+                                        .memberEntity(oppositeMemberEntity)
+                                        .coinEntity(tradeEntity.getCoinEntity())
+                                        .build();
+
+                                walletRepository.save(oppositeWalletEntity);
+                            }
+                    );
+        } else if (tradeEntity.getTradeType().equals(TradeType.SELL)) {
+            BigDecimal totalPrice = tradeEntity.getAmount().multiply(tradeEntity.getPrice());
+            if (memberEntity.getBalance().compareTo(totalPrice) < 0) {
+                throw new CustomException(ErrorCode.INSUFFICIENT_BALANCE);
+            }
+
+            // 나
+            memberEntity.minusBalance(totalPrice);
+            walletRepository.findByMemberEntityAndCoinEntity(memberEntity, tradeEntity.getCoinEntity())
+                    .ifPresentOrElse(
+                            walletEntity -> {
+                                BigDecimal currentTotalAmount = walletEntity.getAmount();
+                                BigDecimal currentAverage = walletEntity.getAverage();
+                                BigDecimal newTradeAmount = tradeEntity.getAmount();
+                                BigDecimal newTradePrice = tradeEntity.getPrice();
+                                BigDecimal newAverage = (currentAverage.multiply(currentTotalAmount).add(newTradePrice.multiply(newTradeAmount)))
+                                        .divide(currentTotalAmount.add(newTradeAmount), 10, RoundingMode.UNNECESSARY);
+
+                                walletEntity.plusAmount(tradeEntity.getAmount());
+                                walletEntity.updateAverage(newAverage);
+
+                                walletEntity.plusAmount(tradeEntity.getAmount());
+                                walletEntity.updateAverage(newAverage);
+                            },
+                            () -> {
+                                WalletEntity walletEntity = WalletEntity.builder()
+                                        .amount(tradeEntity.getAmount())
+                                        .average(tradeEntity.getPrice())
+                                        .memberEntity(memberEntity)
+                                        .coinEntity(tradeEntity.getCoinEntity())
+                                        .build();
+
+                                walletRepository.save(walletEntity);
+                            }
+                    );
+
+            // 상대
+            MemberEntity oppositeMemberEntity = tradeEntity.getMemberEntity();
+            oppositeMemberEntity.plusBalance(tradeEntity.getAmount().multiply(tradeEntity.getPrice()));
+        }
+        tradeRepository.delete(tradeEntity);
     }
 
     private TradeEntity validateTradeEntity(Long tradeId) {
