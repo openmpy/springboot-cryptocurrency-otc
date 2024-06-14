@@ -1,5 +1,6 @@
 package com.openmpy.ecommerce.domain.trade.controller;
 
+import com.openmpy.ecommerce.domain.trade.controller.docs.TradeControllerDocs;
 import com.openmpy.ecommerce.domain.trade.dto.request.BuyTradeRequestDto;
 import com.openmpy.ecommerce.domain.trade.dto.request.SellTradeRequestDto;
 import com.openmpy.ecommerce.domain.trade.dto.response.BuyTradeResponseDto;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/trades")
 @RestController
-public class TradeController {
+public class TradeController implements TradeControllerDocs {
 
     private final TradeService tradeService;
 

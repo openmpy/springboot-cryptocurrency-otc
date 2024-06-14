@@ -1,5 +1,6 @@
 package com.openmpy.ecommerce.domain.member.controller;
 
+import com.openmpy.ecommerce.domain.member.controller.docs.MemberControllerDocs;
 import com.openmpy.ecommerce.domain.member.dto.request.SigninMemberRequestDto;
 import com.openmpy.ecommerce.domain.member.dto.request.SignupMemberRequestDto;
 import com.openmpy.ecommerce.domain.member.dto.response.GetMemberResponseDto;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/members")
 @RestController
-public class MemberController {
+public class MemberController implements MemberControllerDocs {
 
     private final MemberService memberService;
     private final WalletService walletService;

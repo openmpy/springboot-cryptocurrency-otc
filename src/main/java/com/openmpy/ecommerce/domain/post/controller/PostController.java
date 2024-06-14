@@ -1,5 +1,6 @@
 package com.openmpy.ecommerce.domain.post.controller;
 
+import com.openmpy.ecommerce.domain.post.controller.docs.PostControllerDocs;
 import com.openmpy.ecommerce.domain.post.dto.request.CreatePostRequestDto;
 import com.openmpy.ecommerce.domain.post.dto.request.UpdatePostRequestDto;
 import com.openmpy.ecommerce.domain.post.dto.response.CreatePostResponseDto;
@@ -24,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/posts")
 @RestController
-public class PostController {
+public class PostController implements PostControllerDocs {
 
     private final PostService postService;
     private final PostLikeService postLikeService;

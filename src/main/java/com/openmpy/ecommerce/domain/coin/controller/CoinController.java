@@ -1,5 +1,6 @@
 package com.openmpy.ecommerce.domain.coin.controller;
 
+import com.openmpy.ecommerce.domain.coin.controller.docs.CoinControllerDocs;
 import com.openmpy.ecommerce.domain.coin.dto.response.GetUpbitCoinResponseDto;
 import com.openmpy.ecommerce.domain.coin.dto.response.ListUpbitCoinResponseDto;
 import com.openmpy.ecommerce.domain.coin.service.CoinService;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/coins")
 @RestController
-public class CoinController {
+public class CoinController implements CoinControllerDocs {
 
     private final CoinService coinService;
 
