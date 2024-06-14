@@ -7,6 +7,7 @@ import com.openmpy.ecommerce.domain.member.repository.MemberRepository;
 import com.openmpy.ecommerce.domain.trade.dto.request.BuyTradeRequestDto;
 import com.openmpy.ecommerce.domain.trade.dto.request.SellTradeRequestDto;
 import com.openmpy.ecommerce.domain.trade.dto.response.BuyTradeResponseDto;
+import com.openmpy.ecommerce.domain.trade.dto.response.GetTradeResponseDto;
 import com.openmpy.ecommerce.domain.trade.dto.response.SellTradeResponseDto;
 import com.openmpy.ecommerce.domain.trade.entity.TradeEntity;
 import com.openmpy.ecommerce.domain.trade.entity.constants.TradeType;
@@ -16,10 +17,16 @@ import com.openmpy.ecommerce.domain.wallet.repository.WalletRepository;
 import com.openmpy.ecommerce.global.exception.CustomException;
 import com.openmpy.ecommerce.global.exception.constants.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Transactional
@@ -73,6 +80,14 @@ public class TradeService {
         tradeRepository.delete(tradeEntity);
     }
 
+    @Transactional(readOnly = true)
+    public Page<GetTradeResponseDto> gets(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(Math.max(0, page), size, Sort.Direction.DESC, "createdAt");
+        Page<TradeEntity> pagedTrades = tradeRepository.findAll(pageRequest);
+        List<GetTradeResponseDto> tradeResponses = getTradeResponseDtos(pagedTrades);
+        return new PageImpl<>(tradeResponses, pageRequest, pagedTrades.getTotalElements());
+    }
+
     private TradeEntity validateTradeEntity(Long tradeId) {
         return tradeRepository.findById(tradeId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TRADE));
@@ -108,5 +123,11 @@ public class TradeService {
                             }
                     );
         }
+    }
+
+    private List<GetTradeResponseDto> getTradeResponseDtos(Page<TradeEntity> pagedTrades) {
+        List<GetTradeResponseDto> tradeResponses = new ArrayList<>();
+        pagedTrades.forEach(tradeEntity -> tradeResponses.add(new GetTradeResponseDto(tradeEntity)));
+        return tradeResponses;
     }
 }

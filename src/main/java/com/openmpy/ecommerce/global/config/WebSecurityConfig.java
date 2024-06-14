@@ -25,6 +25,7 @@ public class WebSecurityConfig {
     private static final String[] GET_PERMIT_STRINGS = {
             "/api/v1/posts", "/api/v1/posts/search", "/api/v1/posts/{postId}",
             "/api/v1/coins", "/api/v1/coins/{coinId}",
+            "/api/v1/trades"
     };
     private static final String[] POST_PERMIT_STRINGS = {
             "/api/v1/members/signup", "/api/v1/members/signin"

@@ -3,11 +3,13 @@ package com.openmpy.ecommerce.domain.trade.controller;
 import com.openmpy.ecommerce.domain.trade.dto.request.BuyTradeRequestDto;
 import com.openmpy.ecommerce.domain.trade.dto.request.SellTradeRequestDto;
 import com.openmpy.ecommerce.domain.trade.dto.response.BuyTradeResponseDto;
+import com.openmpy.ecommerce.domain.trade.dto.response.GetTradeResponseDto;
 import com.openmpy.ecommerce.domain.trade.dto.response.SellTradeResponseDto;
 import com.openmpy.ecommerce.domain.trade.service.TradeService;
 import com.openmpy.ecommerce.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -48,5 +50,14 @@ public class TradeController {
         String email = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
         tradeService.cancel(email, tradeId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<GetTradeResponseDto>> gets(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<GetTradeResponseDto> responseDto = tradeService.gets(page, size);
+        return ResponseEntity.ok(responseDto);
     }
 }
